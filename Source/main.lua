@@ -1,8 +1,7 @@
 local gfx = playdate.graphics
 
-local clockColor = gfx.kColorWhite
 playdate.getSystemMenu():addCheckmarkMenuItem("XOR", false, function(checked)
-    clockColor = checked and gfx.kColorXOR or gfx.kColorWhite
+    gfx.setColor(checked and gfx.kColorXOR or gfx.kColorWhite)
 end)
 
 local thickness = false
@@ -14,19 +13,12 @@ local ms = 0
 local depth = 5
 local shrinkage = 1
 
-gfx.setLineCapStyle(playdate.graphics.kLineCapStyleRound)
+gfx.setLineCapStyle(gfx.kLineCapStyleRound)
+gfx.setImageDrawMode(gfx.kDrawModeNXOR)
+gfx.setColor(gfx.kColorWhite)
 
 function playdate:update()
-	gfx.setColor(gfx.kColorBlack)
-	gfx.fillRect(0, 0, 400, 240)
-	gfx.setColor(clockColor)
-
-	local time = playdate.getTime()
-	if (playdate.isCrankDocked()) then
-		ms += (time.hour*60*60*1000 + time.minute*60*1000 + time.second*1000 + time.millisecond - ms)/2
-	else
-		ms += playdate.getCrankChange()*100
-	end
+	gfx.clear(gfx.kColorBlack)
 
 	if (playdate.buttonJustPressed(playdate.kButtonUp)) then
 		depth += 1
@@ -38,8 +30,17 @@ function playdate:update()
 		shrinkage += 0.1
 	end
 
+	local time = playdate.getTime()
+	if (playdate.isCrankDocked()) then
+		ms += (time.hour*60*60*1000 + time.minute*60*1000 + time.second*1000 + time.millisecond - ms)/2
+	else
+		ms += playdate.getCrankChange()*100
+	end
+
 	drawClock(ms, 200, 120, -math.pi/2, 100, depth, true)
 
+	gfx.drawText("Depth: " .. depth, 0, 20)
+	playdate.drawFPS(0, 0)
 end
 
 function drawClock(ms, x, y, angle, length, depth, drawHour)
