@@ -1,18 +1,38 @@
-.PHONY: clean
-.PHONY: all
-.PHONY: run
+HEAP_SIZE      = 8388208
+STACK_SIZE     = 61800
 
-PLAYDATE_SDK_PATH="/Users/ivo/Developer/PlaydateSDK"
-SIM="Playdate Simulator"
+PRODUCT = Fractal\ Clock.pdx
 
-all: Fractal\ Clock.pdx
+# Locate the SDK
+SDK = ${PLAYDATE_SDK_PATH}
+ifeq ($(SDK),)
+SDK = $(shell egrep '^\s*SDKRoot' ~/.Playdate/config | head -n 1 | cut -c9-)
+endif
 
-Fractal\ Clock.pdx: Source/main.lua
-	pdc Source Fractal\ Clock.pdx
+ifeq ($(SDK),)
+$(error SDK path not found; set ENV value PLAYDATE_SDK_PATH)
+endif
 
-clean:
-	rm -rf Fractal\ Clock.pdx
+# List C source files here
+SRC = main.c
 
-run: all
-	$(PLAYDATE_SDK_PATH)/bin/$(SIM).app/Contents/MacOS/$(SIM) Fractal\ Clock.pdx
+# List all user directories here
+UINCDIR = 
+
+# List user asm files
+UASRC = 
+
+# List all user C define here, like -D_DEBUG=1
+UDEFS = 
+
+# Define ASM defines here
+UADEFS = 
+
+# List the user directory to look for the libraries here
+ULIBDIR =
+
+# List all user libraries here
+ULIBS =
+
+include $(SDK)/C_API/buildsupport/common.mk
 
