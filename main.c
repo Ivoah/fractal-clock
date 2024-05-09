@@ -46,8 +46,6 @@ static void drawClock(unsigned int ms, double x, double y, double angle, int len
 static int update(void* ud) {
 	pd->graphics->clear(kColorBlack);
 
-	PDButtons pushed;
-	pd->system->getButtonState(NULL, &pushed, NULL);
 
 	unsigned int milliseconds;
 	int epoch = pd->system->getSecondsSinceEpoch(&milliseconds) + tzOff;
@@ -59,6 +57,8 @@ static int update(void* ud) {
 		ms += pd->system->getCrankChange()*100;
 	}
 
+	PDButtons pushed;
+	pd->system->getButtonState(NULL, &pushed, NULL);
 	if (pushed & kButtonUp) {
 		depth += 1;
 	} else if (pushed & kButtonDown) {
